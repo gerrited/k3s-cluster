@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: open-webui
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: open-webui
+    repoURL: https://helm.openwebui.com/
+    targetRevision: 8.x.x  # Prüfe die aktuellste Version auf ArtifactHub
+    helm:
+      values: |
+        # Wichtige Anpassungen für Raspberry Pi / k3s
+        persistence:
+          enabled: true
+          size: 2Gi
+        
+        # Falls du Ollama separat laufen hast (z.B. auf einem anderen PC mit GPU)
+        ollama:
+          enabled: false
+        extraEnvVars:
+          - name: OLLAMA_BASE_URL
+            value: "http://deine-ollama-ip:11434"
+        
+        # Ingress für k3s (Traefik ist Standard bei k3s)
+        ingress:
+          enabled: true
+          class: traefik
+          host: "open-webui.local" # Deine gewünschte Domain
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: open-webui
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
