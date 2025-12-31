@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: generate-workout
-            image: ghcr.io/gerrited/workout-generator:bd03bc0c973f4929ebe08ca7d1be83c850afa1c77c0a62e2f976a86c308d8982
+            image: ghcr.io/gerrited/workout-generator:latest
             volumeMounts:
             - name: workout-volume
               mountPath: "/usr/src/app/data"
